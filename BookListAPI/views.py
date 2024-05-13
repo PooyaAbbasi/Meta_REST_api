@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view, action
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.views import APIView
 from django.http import HttpResponse
 from .models import Book
 
@@ -34,6 +35,17 @@ class BookView(ViewSet):
 
     def destroy(self, request, pk=None):
         return Response(f'destroy book : {pk}', status=status.HTTP_200_OK)
+
+
+class BookCollectionView(APIView):
+    def get(self, request):
+        books = Book.objects.all()
+        return Response(data=books, status=status.HTTP_200_OK)
+        pass
+
+    def post(self, request):
+        author = request.data.get('author')
+        return Response(data=author, status=status.HTTP_200_OK)
 
 
 class BorrowBookView(CreateAPIView, RetrieveAPIView):

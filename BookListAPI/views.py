@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status, generics
-from rest_framework.decorators import api_view
-from rest_framework.viewsets import ViewSet
+from rest_framework.decorators import api_view, action
+from rest_framework.viewsets import ViewSet, ModelViewSet
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.http import HttpResponse
+from .models import Book
 
 # Create your views here.
 
@@ -21,9 +24,9 @@ class BookListView:
         return Response(data='list of books Class method ', status=status.HTTP_200_OK)
 
 
-class Book(ViewSet):
+class BookView(ViewSet):
 
-    def get(self, request, pk=None):
+    def retrieve(self, request, pk=None):
         return Response(f'get book : {pk}', status=status.HTTP_200_OK)
 
     def list(self, request):
@@ -33,4 +36,27 @@ class Book(ViewSet):
         return Response(f'destroy book : {pk}', status=status.HTTP_200_OK)
 
 
+class BorrowBookView(CreateAPIView, RetrieveAPIView):
+
+    queryset = Book.objects.all()
+    """ permission_classes = [IsAuthenticated, IsAdminUser]
+    """
+    serializer_class = None
+
+    # customizing permissions and selected authentication
+    def get_permissions(self):
+        permission_classes = []
+        if self.request.method in ['POST', 'DELETE', 'PUT', 'PATCH']:
+            permission_classes.append(IsAuthenticated)
+
+        return [permission() for permission in permission_classes]
+
+    # customizing queryset
+    def get_queryset(self):
+        return Book.objects.filter(author=self.request.user)
+
+    # customizing CRUD methods
+    # other methods are post(), put(), patch()
+    def get(self, request, pk, *args, **kwargs):
+        return Response(f"Book Not Found {pk}", status=status.HTTP_404_NOT_FOUND)
 

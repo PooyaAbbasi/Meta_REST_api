@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from django.http import HttpResponse
 from .models import Book
+from BookListAPI import serializers
 
 # Create your views here.
 
@@ -48,12 +49,12 @@ class BookCollectionView(APIView):
         return Response(data=author, status=status.HTTP_200_OK)
 
 
-class BorrowBookView(CreateAPIView, RetrieveAPIView):
+class BorrowBookView(RetrieveAPIView):
 
     queryset = Book.objects.all()
     """ permission_classes = [IsAuthenticated, IsAdminUser]
     """
-    serializer_class = None
+    serializer_class = serializers.BookSerializer
 
     # customizing permissions and selected authentication
     def get_permissions(self):
@@ -72,3 +73,12 @@ class BorrowBookView(CreateAPIView, RetrieveAPIView):
     def get(self, request, pk, *args, **kwargs):
         return Response(f"Book Not Found {pk}", status=status.HTTP_404_NOT_FOUND)
 
+
+class BookCreatView(CreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = serializers.BookSerializer
+
+
+class BookRetrieveView(RetrieveAPIView):
+    queryset = Book.objects.all()
+    serializer_class = serializers.BookSerializer

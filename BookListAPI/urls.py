@@ -22,6 +22,9 @@ urlpatterns = [
     #     }
     # ))
     path('borrow/book/<int:pk>', BorrowBookView.as_view(), name='borrow_book'),
+    path('books', BookCreatView.as_view(), name='books-creator'),
+    path('books/<int:pk>', BookRetrieveView.as_view(), name='books-retrieve'),
+
 ]
 
 # simple_router = SimpleRouter(trailing_slash=False)

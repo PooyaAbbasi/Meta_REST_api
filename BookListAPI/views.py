@@ -23,7 +23,8 @@ class BookListView:
     @staticmethod
     @api_view()
     def list_books(request):
-        return Response(data='list of books Class method ', status=status.HTTP_200_OK)
+        books = Book.objects.all()
+        return Response(data=books.values(), status=status.HTTP_200_OK)
 
 
 class BookView(ViewSet):

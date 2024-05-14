@@ -6,7 +6,7 @@ app_name = 'book_list_api'
 
 urlpatterns = [
     # path('books', list_books, name='list_books'),
-    # path('books', BookListView.list_books, name='list_books'),
+    path('books', BookListView.list_books, name='list_books'),
     # path('books/<int=pk>',
     #      BookView.as_view(
     #          {
@@ -22,7 +22,7 @@ urlpatterns = [
     #     }
     # ))
     path('borrow/book/<int:pk>', BorrowBookView.as_view(), name='borrow_book'),
-    path('books', BookCreatView.as_view(), name='books-creator'),
+    path('book', BookCreatView.as_view(), name='books-creator'),
     path('books/<int:pk>', BookRetrieveView.as_view(), name='books-retrieve'),
 
 ]

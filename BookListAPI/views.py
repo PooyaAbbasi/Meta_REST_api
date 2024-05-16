@@ -25,7 +25,7 @@ class BookListView:
     @api_view()
     def list_books(request):
         books = Book.objects.all()
-        serialized_data = serializers.BookCustomSerializer(books, many=True)
+        serialized_data = serializers.BookSerializer(books, many=True)
 
         return Response(data=serialized_data.data, status=status.HTTP_200_OK)
 
@@ -35,7 +35,7 @@ class BookDetailView:
     @api_view()
     def book_details(request, pk):
         book = get_object_or_404(Book, pk=pk)
-        serialized_item = serializers.BookCustomSerializer(book)
+        serialized_item = serializers.BookSerializer(book)
         return Response(data=serialized_item.data)
 
 

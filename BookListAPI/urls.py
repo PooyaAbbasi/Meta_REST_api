@@ -7,24 +7,7 @@ app_name = 'book_list_api'
 urlpatterns = [
     # path('books', list_books, name='list_books'),
     path('books', BookListView.list_books, name='list_books'),
-    # path('books/<int=pk>',
-    #      BookView.as_view(
-    #          {
-    #              'get': 'get',
-    #              'delete': 'destroy'
-    #          }
-    #      )
-    #      ),
-    #
-    # path('books/<int:pk>', BookView.as_view(
-    #     {
-    #         'get': 'list'
-    #     }
-    # ))
-    path('borrow/book/<int:pk>', BorrowBookView.as_view(), name='borrow_book'),
-    path('book', BookCreatView.as_view(), name='books-creator'),
-    path('books/<int:pk>', BookRetrieveView.as_view(), name='books-retrieve'),
-
+    path('books/<int:pk>', BookDetailView.book_details, name='books-retrieve'),
 ]
 
 # simple_router = SimpleRouter(trailing_slash=False)

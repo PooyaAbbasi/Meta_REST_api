@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from .models import Book
 from BookListAPI import serializers
 
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 
@@ -24,7 +25,18 @@ class BookListView:
     @api_view()
     def list_books(request):
         books = Book.objects.all()
-        return Response(data=books.values(), status=status.HTTP_200_OK)
+        serialized_data = serializers.BookCustomSerializer(books, many=True)
+
+        return Response(data=serialized_data.data, status=status.HTTP_200_OK)
+
+
+class BookDetailView:
+    @staticmethod
+    @api_view()
+    def book_details(request, pk):
+        book = get_object_or_404(Book, pk=pk)
+        serialized_item = serializers.BookCustomSerializer(book)
+        return Response(data=serialized_item.data)
 
 
 class BookView(ViewSet):

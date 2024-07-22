@@ -7,8 +7,9 @@ from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from django.http import HttpResponse
-from .models import Book
+from .models import Book, Category
 from BookListAPI import serializers
+from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import get_object_or_404
 # Create your views here.
@@ -27,7 +28,7 @@ class BookListView:
         books = Book.objects.all()
         serialized_data = serializers.BookSerializer(books, many=True)
 
-        return Response(data=serialized_data.data, status=status.HTTP_200_OK)
+        return Response(data=serialized_data.data)
 
 
 class BookDetailView:
@@ -39,10 +40,35 @@ class BookDetailView:
         return Response(data=serialized_item.data)
 
 
+class CategoryView(APIView):
+
+    def get(self, request, pk=None):
+
+        if pk:
+            category = get_object_or_404(Category, pk=pk)
+            serializer = serializers.CategorySerializer(category)
+        else:
+            category = Category.objects.all()
+            serializer = serializers.CategorySerializer(category, many=True)
+
+        return Response(data=serializer.data)
+        pass
+
+    def post(self, request):
+        new_category = serializers.CategorySerializer(data=request.POST)
+        if new_category.is_valid():
+            new_category.save()
+            return Response(data=new_category.data, status=status.HTTP_201_CREATED)
+
+        return Response(new_category.errors, status.HTTP_402_PAYMENT_REQUIRED)
+
+
 class BookView(ViewSet):
 
     def retrieve(self, request, pk=None):
-        return Response(f'get book : {pk}', status=status.HTTP_200_OK)
+        data = [self.name, self.description, self.basename, self.action, self.detail, self.suffix,]
+        data = ' \n '.join(f'{d=}' for d in data)
+        return Response(f'get book : {pk} ' + data, status=status.HTTP_200_OK)
 
     def list(self, request):
         return Response(data='list of books in list view set ', status=status.HTTP_200_OK)

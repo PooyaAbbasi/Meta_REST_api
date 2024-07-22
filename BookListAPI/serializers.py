@@ -1,5 +1,16 @@
 from rest_framework import serializers
-from BookListAPI.models import Book
+from BookListAPI.models import Book, Category
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from io import BytesIO
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    books = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ['name', 'books']
 
 
 class BookSerializer(serializers.ModelSerializer):
@@ -10,9 +21,11 @@ class BookSerializer(serializers.ModelSerializer):
     full_author_name = serializers.SerializerMethodField()
     # the associated method might be named like get_{field_name} or should be passed
 
+    category = CategorySerializer(read_only=True)
+
     class Meta:
         model = Book
-        fields = ['user_name', 'title', 'author', 'full_author_name']
+        fields = ['user_name', 'title', 'author', 'full_author_name', 'category', ]
         # '__all__' represent all of abow fields.
 
     def get_full_author_name(self, book: Book) -> str:

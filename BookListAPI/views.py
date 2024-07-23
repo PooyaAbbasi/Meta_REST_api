@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework.response import Response
+from rest_framework.request import HttpRequest
 from rest_framework import status, generics
 from rest_framework.decorators import api_view, action
 from rest_framework.viewsets import ViewSet, ModelViewSet
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from django.http import HttpResponse
@@ -12,6 +13,8 @@ from BookListAPI import serializers
 from rest_framework.renderers import JSONRenderer
 
 from django.shortcuts import get_object_or_404
+
+
 # Create your views here.
 
 
@@ -48,7 +51,7 @@ class CategoryView(APIView):
             category = get_object_or_404(Category, pk=pk)
             serializer = serializers.CategorySerializer(category)
         else:
-            category = Category.objects.all()
+            category = Category.objects.prefetch_related('books').all()
             serializer = serializers.CategorySerializer(category, many=True)
 
         return Response(data=serializer.data)
@@ -118,6 +121,6 @@ class BookCreatView(CreateAPIView):
     serializer_class = serializers.BookSerializer
 
 
-class BookRetrieveView(RetrieveAPIView):
+class SingleBookView(RetrieveUpdateAPIView, DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = serializers.BookSerializer

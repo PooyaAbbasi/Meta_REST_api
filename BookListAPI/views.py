@@ -36,7 +36,7 @@ class BookListView:
     @renderer_classes((TemplateHTMLRenderer, CSVRenderer, ))
     def list_books(request):
 
-        books = Book.objects.select_related('category').all()
+        books = BookListView.get_queryset(request)
         serializer = serializers.BookSerializer(books, many=True, context={'request': request})
 
         if request.GET['format'] == 'html':
@@ -48,6 +48,23 @@ class BookListView:
 
         if request.GET['format'] == 'csv':
             return Response(data=serializer.data, content_type='text/csv')
+
+    @staticmethod
+    def get_queryset(request: Request) -> QuerySet:
+        items = Book.objects.select_related('category').all()
+
+        query_params = request.query_params.dict()
+        if target_category := query_params.get('category'):
+            items = items.filter(category__name=target_category)
+        if search := query_params.get('search'):
+            items = items.filter(title__icontains=search)
+        if ordering_fields := query_params.get('ordering'):
+            ordering_fields = ordering_fields.split(',')
+            items = items.order_by(*ordering_fields)
+
+        return items
+        pass
+
 
 
 @api_view(['GET',])

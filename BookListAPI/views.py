@@ -1,37 +1,60 @@
+from django.db.models import QuerySet
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.request import HttpRequest
 from rest_framework import status, generics
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view, action, renderer_classes
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
-from django.http import HttpResponse
-from .models import Book, Category
 from BookListAPI import serializers
-from rest_framework.renderers import JSONRenderer
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer
+from rest_framework_csv.renderers import CSVRenderer
+from rest_framework.request import Request
+
 
 from django.shortcuts import get_object_or_404
 
+from .serializers import BookSerializer
+from .models import Book, Category
 
 # Create your views here.
 
 
+"""
 @api_view(['GET', 'POST'])
 def list_books(request):
     return Response(data='List of Books', status=status.HTTP_200_OK)
+"""
 
 
 class BookListView:
 
     @staticmethod
-    @api_view()
+    @api_view(['GET',])
+    @renderer_classes((TemplateHTMLRenderer, CSVRenderer, ))
     def list_books(request):
-        books = Book.objects.all()
-        serialized_data = serializers.BookSerializer(books, many=True)
 
-        return Response(data=serialized_data.data)
+        books = Book.objects.select_related('category').all()
+        serializer = serializers.BookSerializer(books, many=True, context={'request': request})
+
+        if request.GET['format'] == 'html':
+            welcome_message = 'welcome to list of books'
+            return Response(
+                {'data': serializer.data, 'welcome_message': welcome_message},
+                template_name='BookListAPI/book-items.html',
+            )
+
+        if request.GET['format'] == 'csv':
+            return Response(data=serializer.data, content_type='text/csv')
+
+
+@api_view(['GET',])
+def book_detail(request, pk):
+    book = get_object_or_404(Book, pk=pk)
+    serializer = BookSerializer(book, context={'request': request})
+    return Response(data=serializer.data, )
 
 
 class BookDetailView:
@@ -39,7 +62,7 @@ class BookDetailView:
     @api_view()
     def book_details(request, pk):
         book = get_object_or_404(Book, pk=pk)
-        serialized_item = serializers.BookSerializer(book)
+        serialized_item = serializers.BookSerializer(book, context={'request': request})
         return Response(data=serialized_item.data)
 
 
@@ -58,7 +81,7 @@ class CategoryView(APIView):
         pass
 
     def post(self, request):
-        new_category = serializers.CategorySerializer(data=request.POST)
+        new_category = serializers.CategorySerializer(data=request.data)
         if new_category.is_valid():
             new_category.save()
             return Response(data=new_category.data, status=status.HTTP_201_CREATED)

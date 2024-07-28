@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Books </title>
+</head>
+<body>
+<table width="100%" style="text-align: left">
+  <thead>
+    {{ welcome_message }}
+    <tr>
+      <th> ID </th>
+      <th> Title </th>
+      <th> Author </th>
+      <th> Category </th>
+    </tr>
+  </thead>
+  {% for book in data %}
+  	<tr>
+      <td> {{ book.user_name }} </td>
+      <td> {{ book.title }} </td>
+      <td> {{ book.author }} </td>
+      <td> 
+        <span>{{ book.category.id }} </span>
+        <span>{{ book.category.name }}</span>
+      </td>
+    </tr>
+  {% endfor %}
+
+</table>
+
+
+</body>
+</html>

@@ -2,17 +2,17 @@ from django.urls import path
 from rest_framework.routers import SimpleRouter, DefaultRouter
 from BookListAPI.views import *
 
-app_name = 'book_list_api'
+app_name = 'book-list-api'
 
 urlpatterns = [
-    # path('books', list_books, name='list_books'),
-    path('books', BookListView.list_books, name='list_books'),
-    path('books/<int:pk>', SingleBookView.as_view(), name='books-retrieve'),
+    path('book', BookCreatView.as_view(), name='book-create'),
+    path('books', BookListView.list_books, name='list-books'),
+    path('books/<int:pk>', book_detail, name='book-detail'),
     # path('categories', CategoryView.list_categories, name='list_categories'),
     # path('categories/create', CategoryView.category_create, name='category_create'),
     # path('categories/<int:pk>', CategoryView.category_details, name='categories-retrieve'),
-    path('categories', CategoryView.as_view(), name='list_categories'),
-    path('categories/<int:pk>', CategoryView.as_view(), name='retrieve_category'),
+    path('categories', CategoryView.as_view(), name='list-categories'),
+    path('categories/<int:pk>', CategoryView.as_view(), name='detail-category'),
 
 ]
 

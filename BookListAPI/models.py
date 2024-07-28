@@ -13,7 +13,7 @@ class Category(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
-    category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='books', null=True)
+    category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='books')
 
     def __str__(self):
         return self.title + " - " + self.author + " - " + self.category.name

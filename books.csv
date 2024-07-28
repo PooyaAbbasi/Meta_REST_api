@@ -1,0 +1,7 @@
+author,category.id,category.name,full_author_name,title,user_name
+Uncle Bob,1,technology,mr or ms Uncle Bob,Clean Code,1
+John J Martin,2,music,mr or ms John J Martin,Classic Music,2
+Dogo,2,music,mr or ms Dogo,Pragmatic programmer,3
+Dogo,1,technology,mr or ms Dogo,Pragmatic programmer,4
+Mikle Kely,2,music,mr or ms Mikle Kely,When,5
+O'Realy,2,music,mr or ms O'Realy,Pragmatic Programmer second,6

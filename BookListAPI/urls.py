@@ -13,14 +13,15 @@ urlpatterns = [
     # path('categories/<int:pk>', CategoryView.category_details, name='categories-retrieve'),
     path('categories', CategoryView.as_view(), name='list-categories'),
     path('categories/<int:pk>', CategoryView.as_view(), name='detail-category'),
-
 ]
 
 # simple_router = SimpleRouter(trailing_slash=False)
 # simple_router.register('books', BookView, basename='book')
 # urlpatterns += simple_router.urls
 
-# default_router = DefaultRouter(trailing_slash=False)
-# default_router.register('books', BookView)
+default_router = DefaultRouter(trailing_slash=False)
+default_router.register('books-set', BookViewSet, basename='book')
 # default_router.register('borrow/book', BorrowBookView, basename='borrow_book')
-# urlpatterns += default_router.urls
+urlpatterns += default_router.urls
+
+

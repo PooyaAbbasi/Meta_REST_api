@@ -2,7 +2,7 @@ from django.db.models import QuerySet
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.request import HttpRequest
-from rest_framework import status, generics
+from rest_framework import status, generics, filters
 from rest_framework.decorators import api_view, action, renderer_classes
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView
@@ -12,7 +12,7 @@ from BookListAPI import serializers
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer
 from rest_framework_csv.renderers import CSVRenderer
 from rest_framework.request import Request
-
+from django.core.paginator import Paginator, EmptyPage, Page
 
 from django.shortcuts import get_object_or_404
 
@@ -33,10 +33,11 @@ class BookListView:
 
     @staticmethod
     @api_view(['GET',])
-    @renderer_classes((TemplateHTMLRenderer, CSVRenderer, ))
+    @renderer_classes((TemplateHTMLRenderer, CSVRenderer, JSONRenderer))
     def list_books(request):
 
         books = BookListView.get_queryset(request)
+        books = BookListView.get_paginated_items(request, books)
         serializer = serializers.BookSerializer(books, many=True, context={'request': request})
 
         if request.GET['format'] == 'html':
@@ -49,15 +50,21 @@ class BookListView:
         if request.GET['format'] == 'csv':
             return Response(data=serializer.data, content_type='text/csv')
 
+        if request.GET['format'] == 'json':
+            return Response(data=serializer.data, content_type='application/json')
+
     @staticmethod
     def get_queryset(request: Request) -> QuerySet:
         items = Book.objects.select_related('category').all()
 
         query_params = request.query_params.dict()
+
         if target_category := query_params.get('category'):
             items = items.filter(category__name=target_category)
+
         if search := query_params.get('search'):
             items = items.filter(title__icontains=search)
+
         if ordering_fields := query_params.get('ordering'):
             ordering_fields = ordering_fields.split(',')
             items = items.order_by(*ordering_fields)
@@ -65,13 +72,34 @@ class BookListView:
         return items
         pass
 
+    @staticmethod
+    def get_paginated_items(request: Request, queryset: QuerySet):
+        per_page = request.query_params.get('per-page', default=3)
+        page_no = request.query_params.get('page', default=1)
+        paginator = Paginator(queryset, per_page)
+        try:
+            return paginator.page(page_no)
+        except EmptyPage:
+            return []
 
 
-@api_view(['GET',])
+@api_view(['GET', 'PATCH'])
 def book_detail(request, pk):
-    book = get_object_or_404(Book, pk=pk)
-    serializer = BookSerializer(book, context={'request': request})
-    return Response(data=serializer.data, )
+
+    if request.method == 'GET':
+        book = get_object_or_404(Book, pk=pk)
+        serializer = BookSerializer(book, context={'request': request})
+        return Response(data=serializer.data, )
+
+    if request.method == 'PATCH':
+        book = get_object_or_404(Book, pk=pk)
+
+        serializer = BookSerializer(instance=book, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BookDetailView:
@@ -106,18 +134,29 @@ class CategoryView(APIView):
         return Response(new_category.errors, status.HTTP_402_PAYMENT_REQUIRED)
 
 
-class BookView(ViewSet):
+class BookViewSet(ModelViewSet):
+    queryset = Book.objects.select_related('category').all()
+    ModelViewSet.renderer_classes = [TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer]
+    serializer_class = BookSerializer
 
-    def retrieve(self, request, pk=None):
-        data = [self.name, self.description, self.basename, self.action, self.detail, self.suffix,]
-        data = ' \n '.join(f'{d=}' for d in data)
-        return Response(f'get book : {pk} ' + data, status=status.HTTP_200_OK)
+    def get_template_names(self):
+        if self.action == 'list':
+            return ('BookListAPI/book-items.html', )
+        else:
+            return ()
 
-    def list(self, request):
-        return Response(data='list of books in list view set ', status=status.HTTP_200_OK)
+    def list(self, request, *args, **kwargs):
+        response = super(BookViewSet, self).list(request, *args, **kwargs)
 
-    def destroy(self, request, pk=None):
-        return Response(f'destroy book : {pk}', status=status.HTTP_200_OK)
+        if self.request.query_params.get('format') == 'html':
+            response.data = {'data': response.data}
+
+        return response
+
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    ordering_fields = ['title', 'author', 'category__name']
+    search_fields = ['title', 'author', 'category__name']  # will be searched in all fields ignore case
+    search_query_param = 'find'
 
 
 class BookCollectionView(APIView):

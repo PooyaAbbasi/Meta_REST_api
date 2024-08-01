@@ -1,3 +1,4 @@
+import bleach
 from rest_framework import serializers
 from rest_framework.fields import UUIDField
 
@@ -17,7 +18,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class BookSerializer(serializers.ModelSerializer):
     # representing user_name as 'id' attribute of Book instances
-    user_name = serializers.IntegerField(source='id', read_only=True)
+    # user_name = serializers.IntegerField(source='id')
 
     # adding a prepared field
     full_author_name = serializers.SerializerMethodField(read_only=True)
@@ -40,15 +41,30 @@ class BookSerializer(serializers.ModelSerializer):
     # category = serializers.HyperlinkedRelatedField(read_only=True, view_name='book-list-api:detail-category', lookup_field='pk')
 
     category_id = serializers.IntegerField(write_only=True)
+    '''
+    all these parameters can be passed by extra_kwargs in Meta class
+    price = serializers.DecimalField(source='price', min_value=20, max_digits=10, decimal_places=2)
+    '''
 
     class Meta:
         model = Book
-        fields = ['user_name', 'title', 'author', 'full_author_name', 'category', 'category_id' ]
+        fields = ['user_name', 'title', 'author', 'full_author_name', 'category', 'category_id', 'price']
         # '__all__' represent all of abow fields.
         depth = 1
+        extra_kwargs = {
+            'user_name': {'source': 'id', 'read_only': True},
+            'price': {'min_value': 20,}
+        }
 
     def get_full_author_name(self, book: Book) -> str:
         return f'mr or ms {book.author}'
+
+    def validate(self, attrs):
+
+        attrs['title'] = bleach.clean(attrs['title'])
+        attrs['author'] = bleach.clean(attrs['author'])
+
+        return super().validate(attrs)
 
 
 class BookCustomSerializer(serializers.Serializer):

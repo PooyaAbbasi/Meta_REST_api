@@ -3,22 +3,24 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.request import HttpRequest
 from rest_framework import status, generics, filters
-from rest_framework.decorators import api_view, action, renderer_classes
+from rest_framework.decorators import api_view, action, renderer_classes, permission_classes, throttle_classes
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from BookListAPI import serializers
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer, TemplateHTMLRenderer
 from rest_framework_csv.renderers import CSVRenderer
 from rest_framework.request import Request
-from django.core.paginator import Paginator, EmptyPage, Page
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
+from django.core.paginator import Paginator, EmptyPage, Page
+from django.contrib.auth.models import Group, User
 from django.shortcuts import get_object_or_404
 
 from .serializers import BookSerializer
 from .models import Book, Category
-
+from .throttles import TenUserRateThrottle
 # Create your views here.
 
 
@@ -136,7 +138,7 @@ class CategoryView(APIView):
 
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.select_related('category').all()
-    ModelViewSet.renderer_classes = [TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer]
+    renderer_classes = [BrowsableAPIRenderer, JSONRenderer, TemplateHTMLRenderer]
     serializer_class = BookSerializer
 
     def get_template_names(self):
@@ -145,9 +147,9 @@ class BookViewSet(ModelViewSet):
         else:
             return ()
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request: Request, *args, **kwargs):
         response = super(BookViewSet, self).list(request, *args, **kwargs)
-
+        print(f'{request.user.is_authenticated  = }')
         if self.request.query_params.get('format') == 'html':
             response.data = {'data': response.data}
 
@@ -157,6 +159,27 @@ class BookViewSet(ModelViewSet):
     ordering_fields = ['title', 'author', 'category__name']
     search_fields = ['title', 'author', 'category__name']  # will be searched in all fields ignore case
     search_query_param = 'find'
+
+    # permission_classes = (IsAuthenticatedOrReadOnly, )
+    """ conditional permission classes """
+    def get_permissions(self):
+        perm_classes = []
+        if self.action == 'list':
+            perm_classes.append(IsAuthenticated)
+        return [permissionClass() for permissionClass in perm_classes]
+
+    # throttle_classes = (AnonRateThrottle, TenUserRateThrottle)
+    """ conditional throttle classes"""
+    def get_throttles(self):
+        thrott_classes = []
+        if self.action == 'list':
+            thrott_classes.append(TenUserRateThrottle)
+        else:
+            thrott_classes = [UserRateThrottle, AnonRateThrottle]
+
+        return [throttleClass() for throttleClass in thrott_classes]
+
+
 
 
 class BookCollectionView(APIView):
@@ -203,3 +226,34 @@ class BookCreatView(CreateAPIView):
 class SingleBookView(RetrieveUpdateAPIView, DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = serializers.BookSerializer
+
+
+@api_view(['GET',])
+@permission_classes([IsAuthenticated])
+@throttle_classes([TenUserRateThrottle])
+def secret_message(request: Request):
+    if request.user.groups.filter(name='manager').exists():
+        return Response({"secret_message": "The secret of night"})
+    else:
+        return Response({"secret_message": "You are not authorized"}, status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(['GET',])
+@throttle_classes([AnonRateThrottle])
+def throttle_check(request):
+    return Response({'message': f'successful {request.user.is_anonymous = }'})
+
+
+@api_view(['POST'])
+@permission_classes([IsAdminUser])
+def add_group(request: Request):
+    username = request.data.get('username')
+    group_name = request.data.get('group_name')
+    if username and group_name:
+        group: Group = get_object_or_404(Group, name=group_name)
+        user = get_object_or_404(User, username=username)
+        group.user_set.add(user)
+        return Response({'message': f'Added {username} to {group_name}'})
+    else:
+        return Response({'message': 'username and group_name is required'}, status.HTTP_400_BAD_REQUEST)
+

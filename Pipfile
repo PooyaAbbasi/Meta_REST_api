@@ -10,6 +10,8 @@ django-debug-toolbar = "*"
 djangorestframework-xml = "*"
 djangorestframework-csv = "*"
 bleach = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 

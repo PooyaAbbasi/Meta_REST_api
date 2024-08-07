@@ -1,5 +1,6 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter, DefaultRouter
+from rest_framework.authtoken.views import obtain_auth_token
 from BookListAPI.views import *
 
 app_name = 'book-list-api'
@@ -13,6 +14,15 @@ urlpatterns = [
     # path('categories/<int:pk>', CategoryView.category_details, name='categories-retrieve'),
     path('categories', CategoryView.as_view(), name='list-categories'),
     path('categories/<int:pk>', CategoryView.as_view(), name='detail-category'),
+
+    #  authentication implementation
+    path('secret', secret_message, name='secret'),
+    path('api-token-auth', obtain_auth_token, name='obtain-auth-token'),
+
+    # Rate_limit
+    path('throttle-check', throttle_check, name='throttle-check'),
+    path('users/manage/groups', add_group, name='add-group'),
+
 ]
 
 # simple_router = SimpleRouter(trailing_slash=False)

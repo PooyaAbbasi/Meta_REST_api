@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'BookListAPI.apps.BooklistapiConfig',
     'debug_toolbar',
+    'rest_framework.authtoken',
+    'djoser',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+
 ]
 
 MIDDLEWARE = [
@@ -139,5 +145,25 @@ REST_FRAMEWORK = {
         'rest_framework_xml.renderers.XMLRenderer',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 3
+    'PAGE_SIZE': 3,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '5/minute',
+        'anon': '2/minute',
+        'ten': '10/minute',
+    }
 }
+
+DJOSER = {
+    "USER_ID_FIELD": "id",
+    "LOGIN_FIELD": "username",
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5)
+}
+

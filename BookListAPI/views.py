@@ -5,7 +5,7 @@ from rest_framework.request import HttpRequest
 from rest_framework import status, generics, filters
 from rest_framework.decorators import api_view, action, renderer_classes, permission_classes, throttle_classes
 from rest_framework.viewsets import ViewSet, ModelViewSet
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, DestroyAPIView, RetrieveUpdateAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from BookListAPI import serializers
@@ -19,7 +19,7 @@ from django.contrib.auth.models import Group, User
 from django.shortcuts import get_object_or_404
 
 from .serializers import BookSerializer
-from .models import Book, Category
+from .models import *
 from .throttles import TenUserRateThrottle
 # Create your views here.
 
@@ -180,8 +180,6 @@ class BookViewSet(ModelViewSet):
         return [throttleClass() for throttleClass in thrott_classes]
 
 
-
-
 class BookCollectionView(APIView):
     def get(self, request):
         books = Book.objects.all()
@@ -257,3 +255,16 @@ def add_group(request: Request):
     else:
         return Response({'message': 'username and group_name is required'}, status.HTTP_400_BAD_REQUEST)
 
+
+class RatingView(ListCreateAPIView):
+
+    queryset = Rating.objects.all()
+    serializer_class = serializers.RatingSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return []
+
+        return [IsAuthenticated()]
+
+    throttle_classes = [UserRateThrottle]

@@ -23,6 +23,7 @@ urlpatterns = [
     path('throttle-check', throttle_check, name='throttle-check'),
     path('users/manage/groups', add_group, name='add-group'),
 
+    path('ratings', RatingView.as_view(), name='ratings'),
 ]
 
 # simple_router = SimpleRouter(trailing_slash=False)

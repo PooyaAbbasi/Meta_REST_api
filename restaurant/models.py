@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
+from django.shortcuts import reverse
 from decimal import Decimal
 # Create your models here.
 
@@ -18,8 +19,8 @@ class Category(models.Model):
         super().save(force_insert, force_update, using, update_fields)
 
     def get_absolute_url(self):
-        # TODO return url
-        pass
+        return reverse('restaurant:menu-item-detail',
+                       kwargs={'slug': self.slug, 'pk': self.pk})
 
 
 class MenuItem(models.Model):
@@ -27,10 +28,11 @@ class MenuItem(models.Model):
     slug = models.SlugField(null=False)
     price = models.DecimalField(decimal_places=2, max_digits=10, db_index=True)
     featured = models.BooleanField(default=False, db_index=True)
-    category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='menu_items')
+    category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='menu_items', null=True)
 
     def get_absolute_url(self):
-        # TODO return absolute url
+        return reverse('restaurant:menu-item-detail',
+                       kwargs={'slug': self.slug, 'pk': self.pk})
         pass
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

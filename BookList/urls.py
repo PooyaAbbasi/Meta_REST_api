@@ -15,17 +15,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, URLPattern
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
-
+from djoser.urls.base import urlpatterns as base_djoser_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('BookListAPI.urls'),),
+    path('api/v1/', include('restaurant.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
     # Djoser urls
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
+    path('api/v1/', include('djoser.urls')),
+    path('', include('djoser.urls.authtoken')),
     path('auth/jwt-token/obtain', TokenObtainPairView.as_view(), name='token_jwt_obtain'),
     path('auth/jwt-token/refresh', TokenRefreshView.as_view(), name='token_jwt_refresh'),
     path('auth/jwt-token/blacklist', TokenBlacklistView.as_view(), name='token_jwt_blacklist'),

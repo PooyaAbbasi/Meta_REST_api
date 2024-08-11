@@ -17,16 +17,24 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class MenuItemSerializer(serializers.ModelSerializer):
 
-    category = serializers.SlugRelatedField(slug_field='title', queryset=Category.objects.all())
+    category = serializers.SlugRelatedField(slug_field='title', queryset=Category.objects.all(), required=False)
 
     class Meta:
         model = MenuItem
-        fields = ['title', 'featured', 'price', 'category']
+        fields = ['id', 'title', 'featured', 'price', 'category', 'link_item']
+        extra_kwargs = {
+            'featured': {'required': True},
+        }
+
+    link_item = serializers.SerializerMethodField(method_name='get_link', read_only=True)
+
+    def get_link(self, menuitem_obj: MenuItem):
+        return menuitem_obj.get_absolute_url()
 
 
 class CartSerializer(serializers.ModelSerializer):
 
-    menu_item = MenuItemSerializer(queryset=MenuItem.objects.all())
+    menu_item = MenuItemSerializer()
     user = serializers.SlugRelatedField(slug_field='username',
                                         queryset=User.objects.all(),
                                         default=serializers.CurrentUserDefault())
@@ -76,7 +84,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
 
     menu_item = MenuItemSerializer(read_only=True)
-    order = serializers.HyperlinkedRelatedField(view_name='order-detail')
+    order = serializers.HyperlinkedRelatedField(view_name='order-detail', read_only=True)
     # Todo view name for order details
     menu_item_link = serializers.SerializerMethodField(method_name='get_menu_item_link')
 

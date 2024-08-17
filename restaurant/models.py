@@ -52,26 +52,30 @@ class Cart(models.Model):
         unique_together = ('user', 'menu_item')
 
     @classmethod
-    def get_total_price_for(cls, user: User):
+    def get_total_price_for_user(cls, user: User):
         """
         :return: total price of all purchased items of user
         """
         return sum((cart.price for cart in cls.objects.filter(user=user)))
         pass
 
+    @classmethod
+    def get_total_price_for_carts(cls, carts: models.QuerySet):
+        return sum((cart.price for cart in carts))
+
     @property
     def price(self) -> Decimal:
-        return self.menu_item.price * self.quantity
+        return Decimal(self.unit_price * self.quantity)
 
     @property
     def unit_price(self) -> Decimal:
-        return self.menu_item.price
+        return Decimal(self.menu_item.price)
 
 
 class Order(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='orders')
     status = models.BooleanField(default=False, help_text='is delivered or not')
-    total_price = models.DecimalField(decimal_places=2, max_digits=10)
+    total_price = models.DecimalField(decimal_places=2, max_digits=20)
     delivery_crew = models.ForeignKey(to=User, on_delete=models.PROTECT, related_name='assigned_orders', null=True)
     date_time = models.DateTimeField(db_index=True, auto_now_add=True)
 
@@ -84,3 +88,7 @@ class OrderItem(models.Model):
 
     class Meta:
         unique_together = ('order', 'menu_item')
+
+    @property
+    def price(self):
+        return Decimal(self.unit_price * self.quantity)

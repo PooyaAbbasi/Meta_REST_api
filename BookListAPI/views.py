@@ -1,4 +1,4 @@
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Avg
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.request import HttpRequest
@@ -17,6 +17,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from django.core.paginator import Paginator, EmptyPage, Page
 from django.contrib.auth.models import Group, User
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, HttpRequest
 
 from .serializers import BookSerializer
 from .models import *
@@ -32,7 +33,10 @@ def list_books(request):
 
 
 class BookListView:
-
+    """
+        Implementing a class_based view for listing books.
+        implementing search and filtering manually.
+    """
     @staticmethod
     @api_view(['GET',])
     @renderer_classes((TemplateHTMLRenderer, CSVRenderer, JSONRenderer))
@@ -57,7 +61,7 @@ class BookListView:
 
     @staticmethod
     def get_queryset(request: Request) -> QuerySet:
-        items = Book.objects.select_related('category').all()
+        items = Book.objects.select_related('category').all().annotate(avg_rating=Avg('book_ratings__rating')).order_by('-avg_rating')
 
         query_params = request.query_params.dict()
 
@@ -76,6 +80,9 @@ class BookListView:
 
     @staticmethod
     def get_paginated_items(request: Request, queryset: QuerySet):
+        """
+        :return: paginated queryset of books using Django Paginator
+        """
         per_page = request.query_params.get('per-page', default=3)
         page_no = request.query_params.get('page', default=1)
         paginator = Paginator(queryset, per_page)
@@ -86,7 +93,9 @@ class BookListView:
 
 
 @api_view(['GET', 'PATCH'])
+@permission_classes((IsAuthenticatedOrReadOnly,))
 def book_detail(request, pk):
+    """ sample usage of functional view to retrieve book details with limited methods"""
 
     if request.method == 'GET':
         book = get_object_or_404(Book, pk=pk)
@@ -105,6 +114,9 @@ def book_detail(request, pk):
 
 
 class BookDetailView:
+    """
+    sample usage of decorators in class based view
+    """
     @staticmethod
     @api_view()
     def book_details(request, pk):
@@ -137,9 +149,10 @@ class CategoryView(APIView):
 
 
 class BookViewSet(ModelViewSet):
-    queryset = Book.objects.select_related('category').all()
+    queryset = Book.objects.select_related('category').all().annotate(avg_rating=Avg('book_ratings__rating'))
     renderer_classes = [BrowsableAPIRenderer, JSONRenderer, TemplateHTMLRenderer]
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_template_names(self):
         if self.action == 'list':
@@ -164,56 +177,20 @@ class BookViewSet(ModelViewSet):
     """ conditional permission classes """
     def get_permissions(self):
         perm_classes = []
-        if self.action == 'list':
+        if self.action != 'list':
             perm_classes.append(IsAuthenticated)
         return [permissionClass() for permissionClass in perm_classes]
 
     # throttle_classes = (AnonRateThrottle, TenUserRateThrottle)
     """ conditional throttle classes"""
     def get_throttles(self):
-        thrott_classes = []
+        throttle_classes = []
         if self.action == 'list':
-            thrott_classes.append(TenUserRateThrottle)
+            throttle_classes.append(TenUserRateThrottle)
         else:
-            thrott_classes = [UserRateThrottle, AnonRateThrottle]
+            throttle_classes = [UserRateThrottle, AnonRateThrottle]
 
-        return [throttleClass() for throttleClass in thrott_classes]
-
-
-class BookCollectionView(APIView):
-    def get(self, request):
-        books = Book.objects.all()
-        return Response(data=books, status=status.HTTP_200_OK)
-        pass
-
-    def post(self, request):
-        author = request.data.get('author')
-        return Response(data=author, status=status.HTTP_200_OK)
-
-
-class BorrowBookView(RetrieveAPIView):
-
-    queryset = Book.objects.all()
-    """ permission_classes = [IsAuthenticated, IsAdminUser]
-    """
-    serializer_class = serializers.BookSerializer
-
-    # customizing permissions and selected authentication
-    def get_permissions(self):
-        permission_classes = []
-        if self.request.method in ['POST', 'DELETE', 'PUT', 'PATCH']:
-            permission_classes.append(IsAuthenticated)
-
-        return [permission() for permission in permission_classes]
-
-    # customizing queryset
-    def get_queryset(self):
-        return Book.objects.filter(author=self.request.user)
-
-    # customizing CRUD methods
-    # other methods are post(), put(), patch()
-    def get(self, request, pk, *args, **kwargs):
-        return Response(f"Book Not Found {pk}", status=status.HTTP_404_NOT_FOUND)
+        return [ThrottleClass() for ThrottleClass in throttle_classes]
 
 
 class BookCreatView(CreateAPIView):
@@ -222,6 +199,8 @@ class BookCreatView(CreateAPIView):
 
 
 class SingleBookView(RetrieveUpdateAPIView, DestroyAPIView):
+    """ this view class is sample of using generic views as it is not mapped to any endpoint
+    """
     queryset = Book.objects.all()
     serializer_class = serializers.BookSerializer
 
@@ -257,6 +236,9 @@ def add_group(request: Request):
 
 
 class RatingView(ListCreateAPIView):
+    """
+
+    """
 
     queryset = Rating.objects.all()
     serializer_class = serializers.RatingSerializer
@@ -268,3 +250,12 @@ class RatingView(ListCreateAPIView):
         return [IsAuthenticated()]
 
     throttle_classes = [UserRateThrottle]
+
+
+def reset_pass_confirm(request, uid, token):
+    """
+    This is a testing view as a front end application page for getting new password from user
+    (Authentication with Djoser)
+    """
+    return HttpResponse(content='reset your password')
+

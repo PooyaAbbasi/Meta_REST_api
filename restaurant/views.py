@@ -2,7 +2,7 @@ from typing import *
 
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
-
+from django.http import HttpRequest, HttpResponse
 
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -43,11 +43,11 @@ class MenuItemViewSet(ModelViewSet):
         manager_actions = ['list', 'retrieve', 'update', 'partial_update', 'destroy', 'create', 'options']
         costumer_actions = ['list', 'retrieve',]
         delivery_crew_actions = ['list', 'retrieve',]
-        restaurant_permission = RestaurantPermission(self.request.user,
+        restaurant_permission = RestaurantPermission(self.request.user.group_names,
                                                      manager_actions,
                                                      delivery_crew_actions,
                                                      costumer_actions)
-        return restaurant_permission
+        return [restaurant_permission, ]
 
 
 class GroupManegerViewSet(ViewSet):
@@ -58,7 +58,7 @@ class GroupManegerViewSet(ViewSet):
 
     def list(self, request: Request, group_name: str) -> Response:
         """
-        :return: Paginated Response object containing a list of users of provided group name.
+        :return: Paginated Response object containing a list of sample_users of provided group name.
                 with status code 200.
         """
         group_name = GroupManegerViewSet.get_lookup_group_name(raw_group_name=group_name)
@@ -114,6 +114,7 @@ class CartViewSet(ViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def add(self, request: Request) -> Response:
+        print(f'{request.data["quantity"]=}', type(request.data['quantity']))
         new_cart = self.serializer_class(data=request.data, context={'request': request})
         new_cart.is_valid(raise_exception=True)
         new_cart.save()
@@ -142,6 +143,9 @@ class OrderViewSet(GenericViewSet):
     lookup_url_kwarg = 'id'
 
     def initialize_request(self, request, *args, **kwargs):
+        """
+        :return: request with user that group_names wich is contained names of user groups is attached to user object.
+        """
         request = request = super().initialize_request(request, *args, **kwargs)
         request.user.group_names = _get_user_group_names(request.user)
         return request

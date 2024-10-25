@@ -10,18 +10,18 @@ urlpatterns = [
          name='menu-item-detail'),
 
     # Group management urls
-    path('groups/<str:group_name>/users',
+    path('groups/<str:group_name>/sample_users',
          GroupManegerViewSet.as_view(
              {'get': 'list',
               'post': 'create', }
          ),
-         name='group-users-create-or-list'
+         name='group-sample_users-create-or-list'
          ),
-    path('groups/<str:group_name>/users/<str:username>',
+    path('groups/<str:group_name>/sample_users/<str:username>',
          GroupManegerViewSet.as_view(
              {'delete': 'destroy'}
          ),
-         name='group-users-delete'
+         name='group-sample_users-delete'
          ),
 
     # cart management urls

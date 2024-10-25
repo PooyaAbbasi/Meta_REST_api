@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.validators import UniqueTogetherValidator
+
+
 from io import BytesIO
 
 
@@ -51,7 +53,7 @@ class BookSerializer(serializers.ModelSerializer):
     price = serializers.DecimalField(source='price', min_value=20, max_digits=10, decimal_places=2)
     '''
 
-    ratings = serializers.SerializerMethodField(read_only=True)
+    ratings = serializers.SerializerMethodField(read_only=True, allow_null=True)
 
     class Meta:
         model = Book
@@ -67,7 +69,9 @@ class BookSerializer(serializers.ModelSerializer):
         return f'mr or ms {book.author}'
 
     def get_ratings(self, book: Book):
-        return book.ratings.aggregate(Avg('rating'))['rating__avg']
+
+        # avg_rating should be annotated in queryset
+        return book.avg_rating
 
     def validate(self, attrs):
         attrs['title'] = bleach.clean(attrs['title'])
@@ -82,14 +86,14 @@ class BookCustomSerializer(serializers.Serializer):
 
 
 class RatingSerializer(serializers.ModelSerializer):
-    username = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    username = serializers.SlugRelatedField(source='user', slug_field='username', read_only=True)
     user = serializers.PrimaryKeyRelatedField(write_only=True,
                                               queryset=User.objects.all(),
                                               default=serializers.CurrentUserDefault(),
                                               help_text='id of user who rated this book'
                                               )
 
-    book_title = serializers.SlugRelatedField(slug_field='title', read_only=True)
+    book_title = serializers.SlugRelatedField(source='book', slug_field='title', read_only=True)
     book = serializers.PrimaryKeyRelatedField(write_only=True,
                                               queryset=Book.objects.all(),
                                               help_text='id of book to be rated'
@@ -105,6 +109,6 @@ class RatingSerializer(serializers.ModelSerializer):
             ),
         )
         extra_kwargs = {
-            'rating': {'min_value': 0, 'max_value': 5, 'allow_null': False,},
+            'rating': {'min_value': 0, 'max_value': 5, 'allow_null': False},
         }
 

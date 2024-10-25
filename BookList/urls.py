@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, URLPattern
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenBlacklistView
-from djoser.urls.base import urlpatterns as base_djoser_urls
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -3,6 +3,14 @@ from django.contrib.auth.models import Group, User
 
 
 class RestaurantPermission(permissions.IsAuthenticated):
+    """
+        Restaurant permission class is provided customized for Restaurant app
+        to reduce queries and other optimizations and less code
+        this class can check permissions based on list of actions that provided for each group
+        (current groups : delivery_crew, manager and customers contains ordinary users).
+
+        This permission class has classmethods to check user is belonged to target group or not.
+    """
 
     def __init__(self, user_group_names: list[str],
                  manager_permitted_actions: list[str],
@@ -40,4 +48,3 @@ class RestaurantPermission(permissions.IsAuthenticated):
     @classmethod
     def is_costumer(cls, user_group_names: list[str]) -> bool:
         return not (cls.is_manager(user_group_names) or cls.is_delivery_crew(user_group_names))
-

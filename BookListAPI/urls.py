@@ -19,11 +19,17 @@ urlpatterns = [
     path('secret', secret_message, name='secret'),
     path('api-token-auth', obtain_auth_token, name='obtain-auth-token'),
 
-    # Rate_limit
+    # endpoint to check the rate limit and throttling system
     path('throttle-check', throttle_check, name='throttle-check'),
+
+    # endpoint to add groups
     path('users/manage/groups', add_group, name='add-group'),
+    # Post method only required and username and group_name should be provided.
+    # user with username will be added to group with group_name.
 
     path('ratings', RatingView.as_view(), name='ratings'),
+
+    path('reset_confirm/<str:uid>/<str:token>', reset_pass_confirm, name='reset-pass-confirm'),
 ]
 
 # simple_router = SimpleRouter(trailing_slash=False)

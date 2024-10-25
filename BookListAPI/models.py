@@ -22,8 +22,8 @@ class Book(models.Model):
 
 class Rating(models.Model):
     rating = models.SmallIntegerField(null=False, )
-    book = models.ForeignKey(to=Book, on_delete=models.CASCADE, related_name='ratings')
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='ratings')
+    book = models.ForeignKey(to=Book, on_delete=models.CASCADE, related_name='book_ratings')
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, related_name='user_ratings')
 
     def __str__(self):
         return f'user = {self.user.username} - book = {self.book.title} - rating = {self.rating}'

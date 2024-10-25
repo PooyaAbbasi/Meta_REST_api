@@ -39,13 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'BookListAPI.apps.BooklistapiConfig',
     'debug_toolbar',
     'rest_framework.authtoken',
     'djoser',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    "restaurant.apps.RestaurantConfig"
+    "restaurant.apps.RestaurantConfig",
+    'BookListAPI.apps.BooklistapiConfig',
 
 ]
 
@@ -90,6 +90,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'TEST': {
+        'NAME': BASE_DIR / 'test_db.sqlite3',
     }
 }
 
@@ -118,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -143,7 +146,7 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework_xml.renderers.XMLRenderer',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 6,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -154,7 +157,9 @@ REST_FRAMEWORK = {
         'user': '5/minute',
         'anon': '2/minute',
         'ten': '10/minute',
-    }
+    },
+
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
 DJOSER = {
@@ -163,9 +168,14 @@ DJOSER = {
     "SERIALIZERS": {
         'user_create': 'BookList.serializers.UserCreateSerializer',
     },
+    "PASSWORD_RESET_CONFIRM_URL": "api/v1/reset_confirm/{uid}/{token}",
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5)
 }
 
+
+# email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+SITE_NAME = " MY SITE "

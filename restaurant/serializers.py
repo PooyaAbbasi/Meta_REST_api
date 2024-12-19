@@ -40,19 +40,26 @@ class UserSerializer(BaseUserSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        request = self.context.get('request', None)
+        if request and self.context.get('view').action == 'list':
+            self.fields.pop('menu_items')
+
     class Meta:
         model = Category
-        fields = ['title', 'slug', 'menu_items']
+        fields = ['id', 'title', 'slug', 'menu_items', ]
         extra_kwargs = {
-            'slug': {'read_only': True}
+            'slug': {'read_only': True},
+            'menu_items': {'read_only': True},
         }
 
-    menu_items = serializers.SlugRelatedField(slug_field='title', read_only=True, many=True)
+    menu_items = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
-
-    category = serializers.SlugRelatedField(slug_field='title', queryset=Category.objects.all(), required=False)
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     price = CustomDecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
@@ -69,7 +76,6 @@ class MenuItemSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-
     menu_item_info = serializers.SerializerMethodField(read_only=True)
     user = serializers.SlugRelatedField(slug_field='username',
                                         queryset=User.objects.all(),
@@ -123,7 +129,7 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_user_full_name(self, order: Order):
         return {'username': order.user.username,
                 'first_name': order.user.first_name,
-                'last_name': order.user.last_name,}
+                'last_name': order.user.last_name, }
 
     def get_delivery_crew_name(self, order: Order):
         if order.delivery_crew:
@@ -144,7 +150,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-
     menu_item = serializers.PrimaryKeyRelatedField(write_only=True, queryset=MenuItem.objects.all())
     menu_item_link = serializers.SerializerMethodField(method_name='get_menu_item_link')
 
@@ -167,4 +172,3 @@ class OrderItemSerializer(serializers.ModelSerializer):
         :return:absolute url for menu item
         """
         return this_order_item.menu_item.get_absolute_url()
-

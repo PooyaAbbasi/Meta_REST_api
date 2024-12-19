@@ -28,16 +28,46 @@ def _get_user_group_names(user: User) -> List[str]:
     return [group.name for group in user.groups.all()]
 
 
-class MenuItemViewSet(ModelViewSet):
-    queryset = MenuItem.objects.select_related('category').all()
-    serializer_class = MenuItemSerializer
+class CategoryViewSet(ModelViewSet):
+
+    serializer_class = CategorySerializer
+    authentication_classes = (TokenAuthentication, )
 
     def initialize_request(self, request, *args, **kwargs):
+        # add list of group_names of current user to the request object.
         request = super().initialize_request(request, *args, **kwargs)
         request.user.group_names = _get_user_group_names(request.user)
         return request
 
+    def get_permissions(self):
+        manager_actions = ['list', 'retrieve', 'update', 'partial_update', 'destroy', 'create', 'options']
+        costumer_actions = ['list', 'retrieve', ]
+        delivery_crew_actions = ['list', 'retrieve', ]
+        restaurant_permission = RestaurantPermission(self.request.user.group_names,
+                                                     manager_actions,
+                                                     delivery_crew_actions,
+                                                     costumer_actions)
+        return [restaurant_permission, ]
+
+    def get_queryset(self):
+        base_query_set = Category.objects.all()
+        if self.action != 'list':
+            return base_query_set.prefetch_related('menu_items')
+        else:
+            return base_query_set
+
+
+class MenuItemViewSet(ModelViewSet):
+    queryset = MenuItem.objects.select_related('category').all()
+    serializer_class = MenuItemSerializer
     authentication_classes = (TokenAuthentication, )
+
+    def initialize_request(self, request, *args, **kwargs):
+
+        # add list of group_names of current user to the request object.
+        request = super().initialize_request(request, *args, **kwargs)
+        request.user.group_names = _get_user_group_names(request.user)
+        return request
 
     def get_permissions(self):
         manager_actions = ['list', 'retrieve', 'update', 'partial_update', 'destroy', 'create', 'options']
@@ -91,7 +121,7 @@ class GroupManegerViewSet(ViewSet):
         user = get_object_or_404(User, username=username)
         group = get_object_or_404(Group, name=group_name)
         user.groups.remove(group)
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @classmethod
     def get_lookup_group_name(cls, raw_group_name: str) -> str:
@@ -120,8 +150,8 @@ class CartViewSet(ViewSet):
         new_cart.save()
         return Response(new_cart.data, status=status.HTTP_201_CREATED)
 
-    def destroy(self, request: Request, menuitem_id) -> Response:
-        get_object_or_404(Cart, menu_item=menuitem_id, user=request.user).delete()
+    def destroy(self, request: Request, menu_item_id) -> Response:
+        get_object_or_404(Cart, menu_item=menu_item_id, user=request.user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def clear_carts(self, request: Request) -> Response:
@@ -129,6 +159,20 @@ class CartViewSet(ViewSet):
         for cart in carts.all():
             cart.delete()
         return Response(status=status.HTTP_200_OK)
+
+    def change_cart_quantity(self, request: Request, menu_item_id) -> Response:
+        cart_item = get_object_or_404(Cart, menu_item=menu_item_id, user=request.user)
+        data_to_update = {'quantity': request.data['quantity']}
+        serializer = self.serializer_class(
+            cart_item,
+            partial=True,
+            data=data_to_update,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def get_carts_of_user(self) -> QuerySet:
         return self.request.user.cart_set

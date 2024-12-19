@@ -5,19 +5,21 @@ from restaurant.views import *
 app_name = 'restaurant'
 
 urlpatterns = [
+
+
     path('menu-items/<slug:slug>/<int:pk>',
          MenuItemViewSet.as_view({'get': 'retrieve'}),
          name='menu-item-detail'),
 
     # Group management urls
-    path('groups/<str:group_name>/sample_users',
+    path('groups/<str:group_name>/users',
          GroupManegerViewSet.as_view(
              {'get': 'list',
               'post': 'create', }
          ),
          name='group-sample_users-create-or-list'
          ),
-    path('groups/<str:group_name>/sample_users/<str:username>',
+    path('groups/<str:group_name>/users/<str:username>',
          GroupManegerViewSet.as_view(
              {'delete': 'destroy'}
          ),
@@ -36,13 +38,14 @@ urlpatterns = [
          name='cart-items'
          ),
 
-    path('cart/menu-items/<int:menuitem_id>',
+    path('cart/menu-items/<int:menu_item_id>',
          CartViewSet.as_view(
              {
                  'delete': 'destroy',
+                 'patch': 'change_cart_quantity'
              }
          ),
-         name='cart-item-destroy'
+         name='cart-item-modify'
          ),
 
 ]
@@ -50,4 +53,5 @@ urlpatterns = [
 default_router = DefaultRouter(trailing_slash=False)
 default_router.register('menu-items', MenuItemViewSet, basename='menu-items', )
 default_router.register('orders', OrderViewSet, basename='orders', )
+default_router.register('categories', CategoryViewSet, basename='categories', )
 urlpatterns += default_router.urls

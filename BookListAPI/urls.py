@@ -12,8 +12,8 @@ urlpatterns = [
     # path('categories', CategoryView.list_categories, name='list_categories'),
     # path('categories/create', CategoryView.category_create, name='category_create'),
     # path('categories/<int:pk>', CategoryView.category_details, name='categories-retrieve'),
-    path('categories', CategoryView.as_view(), name='list-categories'),
-    path('categories/<int:pk>', CategoryView.as_view(), name='detail-category'),
+    # path('categories', CategoryView.as_view(), name='list-categories'),
+    # path('categories/<int:pk>', CategoryView.as_view(), name='detail-category'),
 
     #  authentication implementation
     path('secret', secret_message, name='secret'),

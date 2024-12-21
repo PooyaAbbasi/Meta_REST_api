@@ -59,12 +59,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), required=False)
     price = CustomDecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         model = MenuItem
-        fields = ['id', 'title', 'featured', 'price', 'category', 'link_item']
+        fields = ['id', 'title', 'featured', 'price', 'category', 'link_item', 'picture']
         extra_kwargs = {
             'featured': {'required': True},
         }

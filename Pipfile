@@ -12,6 +12,7 @@ djangorestframework-csv = "*"
 bleach = "*"
 djoser = "*"
 djangorestframework-simplejwt = "*"
+pillow = "*"
 
 [dev-packages]
 

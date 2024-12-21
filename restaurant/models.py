@@ -29,6 +29,7 @@ class MenuItem(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10, db_index=True)
     featured = models.BooleanField(default=False, db_index=True)
     category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='menu_items', null=True)
+    picture = models.ImageField(upload_to='menu_items', null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('restaurant:menu-item-detail',

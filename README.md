@@ -1,11 +1,11 @@
 
 
-## Project Title
+## Meta Course Final Project
 Final Project for Meta's Backend Developer Course
 
 ## Description
 I've passed the Back-End developer profassional certificate course of Meta.
-This is the final project for the Meta Backend Developer Course on Coursera. It is built using `Django` adn `DRF` and demonstrates the skills and concepts learned throughout the course.
+This is the final project for the Meta Backend Developer Course on Coursera. It is built using `Django` & `DRF` and demonstrates the skills and concepts learned throughout the course.
 
 ## Apps in the Project
 

@@ -1,0 +1,1827 @@
+{
+	"info": {
+		"_postman_id": "88dd0906-0dc5-4102-a42b-c56f49f994c5",
+		"name": "My Meta Rest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34451963"
+	},
+	"item": [
+		{
+			"name": "Djoser",
+			"item": [
+				{
+					"name": "create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"username = pm.request.body.formdata.get(\"username\")\r",
+									"password = pm.request.body.formdata.get(\"password\")\r",
+									"email = pm.request.body.formdata.get(\"email\")\r",
+									"pm.test(\"created \", () => {\r",
+									"    pm.response.to.have.status(201)\r",
+									"});\r",
+									"\r",
+									"console.log(username + password + email)\r",
+									"pm.collectionVariables.set(username + \"_username\", username);\r",
+									"pm.collectionVariables.set(username + \"_password\", password);\r",
+									"pm.collectionVariables.set(username + \"_email\", email);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{pooya_token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "test_user_2",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "t u 2 ___",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "tu@gmail.com",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/users/",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								""
+							]
+						},
+						"description": "### Create a New User\n\nThis endpoint allows you to create a new user.\n\n#### Request Body\n\n- `username` (text): unique username\n    \n- `password` (text)\n    \n- `email` (text): unique email\n    \n\n#### Response\n\nThe response is in JSON format and has the following schema:\n\n> 200 \n  \n\n``` json\n{\n    \"email\": \"tu@gmail.com\", //string\n    \"username\": \"test_user_1\"//string\n}\n\n ```\n\n> 400 Bad request \n  \n\n- there is existing user with this username or email"
+					},
+					"response": [
+						{
+							"name": "Djoser auth",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "test_user_2",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "t u 2 ___",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "tu@gmail.com",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/users/",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										""
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 19 Dec 2024 14:01:27 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.2"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "djdt-store-id",
+									"value": "a087ee91e33941a9ba58ed48d71ecf53"
+								},
+								{
+									"key": "Server-Timing",
+									"value": "TimerPanel_utime;dur=0;desc=\"User CPU time\", TimerPanel_stime;dur=0;desc=\"System CPU time\", TimerPanel_total;dur=0;desc=\"Total CPU time\", TimerPanel_total_time;dur=14.215100003639236;desc=\"Elapsed time\", SQLPanel_sql_time;dur=0.5352999723982066;desc=\"SQL 1 queries\", CachePanel_total_time;dur=0;desc=\"Cache 0 Calls\""
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "37"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"email\": [\n        \"This field is required.\"\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"respose is ok \", () =>{\r",
+									"    pm.response.to.have.status(200)\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response body is a valid JSON\", () => {\r",
+									"    pm.response.to.be.json;\r",
+									"})\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"var token = jsonData.auth_token;\r",
+									"\r",
+									"var requestBody = pm.request.body ? JSON.parse(pm.request.body.raw) : {};\r",
+									"\r",
+									"var username = requestBody.username;\r",
+									"\r",
+									"pm.collectionVariables.set(username + \"_token\", token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{Holly_username}}\",\r\n    \"password\": \"{{Holly_password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/token/login/",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"token",
+								"login",
+								""
+							]
+						},
+						"description": "The endpoint makes an HTTP POST request to `{{BaseDjURL}}/token/login/` to authenticate a user and obtain an authentication token. The request body should be in raw format with the following payload:\n\n``` json\n{\n  \"username\": \"{{Holly_username}}\",\n  \"password\": \"{{Holly_password}}\"\n}\n\n ```\n\n### Response\n\nThe response of the request is a JSON object with the following schema:\n\n``` json\n{\n    \"auth_token\": \"...\" // string\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Holly_token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/users/me/",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"me",
+								""
+							]
+						},
+						"description": "The endpoint retrieves the details of the authenticated user. The response for this request can be documented as a JSON schema as follows:\n\n> 200 \n  \n\n``` json\n    \"email\": \"...\" // stirng\n    \"username\": \"...\" // string\n\n ```\n\n> 401 Unauthorized \n  \n\n``` json\n{\n    \"detail\": \"Authentication credentials were not provided.\"\n}\n\n ```"
+					},
+					"response": [
+						{
+							"name": "successful",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{Holly_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/users/me/",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"me",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 19 Dec 2024 14:07:45 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.11.2"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "Allow",
+									"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+								},
+								{
+									"key": "djdt-store-id",
+									"value": "961f4845ba6742c98dbcd57d21ed95d6"
+								},
+								{
+									"key": "Server-Timing",
+									"value": "TimerPanel_utime;dur=0;desc=\"User CPU time\", TimerPanel_stime;dur=0;desc=\"System CPU time\", TimerPanel_total;dur=0;desc=\"Total CPU time\", TimerPanel_total_time;dur=10.878900007810444;desc=\"Elapsed time\", SQLPanel_sql_time;dur=0.5665999779012054;desc=\"SQL 1 queries\", CachePanel_total_time;dur=0;desc=\"Cache 0 Calls\""
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "48"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"email\": \"holli00@gmail.com\",\n    \"username\": \"Holly\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Holly_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BaseDjURL}}/token/logout/",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"token",
+								"logout",
+								""
+							]
+						},
+						"description": "The `POST /token/logout/` endpoint is used to log out and invalidate the user's token. Upon successful execution.\n\nthe server returns\n\n> 204 No content \n  \n> 401 Unauthorized \n  \n\n``` json\n{\n    \"detail\": \"Authentication credentials were not provided.\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"poo.8383.abb@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/users/reset_password/",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"reset_password",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reset_confirm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "uid",
+									"value": "MQ",
+									"type": "text"
+								},
+								{
+									"key": "token",
+									"value": "ccn858-cc0fe9dae8ec2ff0fceb622ba0df702d",
+									"type": "text"
+								},
+								{
+									"key": "new_password",
+									"value": "pooya_api_new2**",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/users/reset_password_confirm/",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"reset_password_confirm",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication with Djoser"
+		},
+		{
+			"name": "jwt",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    {{UP super}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/auth/token-jwt",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"auth",
+								"token-jwt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "refresh",
+									"value": "{{refresh jwt}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/auth/jwt-token/refresh",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"auth",
+								"jwt-token",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Blacklist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "refresh",
+									"value": "{{refresh jwt}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/auth/jwt-token/blacklist",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"auth",
+								"jwt-token",
+								"blacklist"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rating",
+			"item": [
+				{
+					"name": "list ratings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/ratings",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rate a book",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "rating",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "book_id",
+									"value": "6",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/ratings",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Restaurant",
+			"item": [
+				{
+					"name": "Menu-items",
+					"item": [
+						{
+							"name": "menu-items list",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{Holly_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/menu-items",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"menu-items"
+									]
+								},
+								"description": "This endpoint makes an HTTP GET request to retrieve menu items from the API. The request does not require any parameters.\n\nresponse is paginated with `page_size` = 6\n\npaginated response includes:\n\n- `count` : (integer) number of items in `results`\n- `next` : (string of URL) url for next page, or `null` there is No next page\n- `previous`: (string of URL) url for previous page, or `null` there is No previous page\n\n- `results`: (array of menu-item objs)\n\n> menu item objects format explained in `retrieve` request\n\n\n### Response\n\nThe response returned is a JSON object with the following schema:\n\n``` json\n    \"count\": {\n      \"type\": \"integer\"\n    },\n    \"next\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"previous\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"results\": [\n      \"type\": \"array\",\n      {\n          \"id\": //\"type\": \"integer\"\n          \"title\": //\"type\": \"string\"\n          \"featured\": //\"type\": \"boolean\"\n          \"price\": //\"type\": \"string\"\n          \"category\": //\"type\": [\"string\", \"null\"]\n          \"link_item\": //\"type\": \"string\"\n      }, ...\n     [\n\n ```\n\nThis JSON schema describes the structure of the response returned by the API when fetching menu items."
+							},
+							"response": []
+						},
+						{
+							"name": "retrieve",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{Holly_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/menu-items/2",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"menu-items",
+										"2"
+									]
+								},
+								"description": "### Get Menu Item Details\n\nThis API endpoint makes an HTTP GET request to retrieve details of a specific menu item.\n\n#### Request\n\n- Method: GET\n    \n- URL: `{{BaseDjURL}}/api/v1/menu-items/{menu_item_id}`\n    \n\n#### Response\n\nThe response will be a JSON object with the following schema:\n\n``` json\n{\n    \"id\"://      \"type\": \"integer\"\n    \"title\"://      \"type\": \"string\"\n    \"featured\"://    \"type\": \"boolean\"\n    \"price\"://   \"type\": \"string\"\n    \"category\"://     \"type\": \"string\"\n    \"link_item\"://     \"type\": \"string\"\n{\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Pasta\",\r\n    \"featured\": false,\r\n    \"price\": \"29.50\"\r\n    // \"category\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/menu-items",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"menu-items"
+									]
+								},
+								"description": "### API Request Description\n\nThis API endpoint allows the client to create a new menu item by sending an HTTP POST request to the specified URL. The request should include a JSON payload in the raw request body with the following parameters:\n\n##### required\n\n- `title` (string): The title of the menu item.\n    \n- `featured` (boolean): Indicates whether the menu item is featured.\n    \n- `price` (string): The price of the menu item.\n    \n\n##### optional\n\n- `category` (int): assign to some category (id of category)\n    \n\nExample Request Body:\n\n``` json\n{\n  \"title\": \"Pasta\",\n  \"featured\": false,\n  \"price\": \"29.50\"\n}\n\n ```\n\n### API Response\n\nThe API responds with a status code of 201 and a JSON object representing the newly created menu item. The response schema is as follows:\n\n``` json\n{\n    \"id\": {\n      \"type\": \"integer\"\n    },\n    \"title\": {\n      \"type\": \"string\"\n    },\n    \"featured\": {\n      \"type\": \"boolean\"\n    },\n    \"price\": {\n      \"type\": \"string\"\n    },\n    \"category\": {\n      \"type\": \"null\"\n    },\n    \"link_item\": {\n      \"type\": \"string\"\n    }\n  }\n}\n\n ```\n\nThe response includes the following properties:\n\n- `id` (integer): The unique identifier of the menu item.\n    \n- `title` (string): The title of the menu item.\n    \n- `featured` (boolean): Indicates whether the menu item is featured.\n    \n- `price` (string): The price of the menu item.\n    \n- `category` (string): The category of the menu item (null in the response).\n    \n- `link_item` (string): A link related to the menu item.\n    \n\n> 403 Forbidden \n  \n\nonly manager have pepermission to create menu-items.\n\n``` json\n{\n    \"detail\": \"You do not have permission to perform this action.\"\n}\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Pasta new \",\r\n    \"featured\": true,\r\n    \"price\": \"30.45\",\r\n    \"category\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/menu-items/6",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"menu-items",
+										"6"
+									]
+								},
+								"description": "### Update Menu Item\n\nThis endpoint is used to update a specific menu item by its ID.\n\n#### Request Body\n\n##### required:\n\n- title (string, required): The updated title of the menu item.\n    \n- featured (boolean, required): Indicates whether the menu item is featured or not.\n    \n- price (string, required): The updated price of the menu item.\n    \n\n##### optional:\n\n- category (string)\n    \n\n#### Response\n\n> 200 \n  \n\nThe response of this request can be documented as a JSON schema:\n\n``` json\n{\n        \"id\": {\n            \"type\": \"integer\"\n        },\n        \"title\": {\n            \"type\": \"string\"\n        },\n        \"featured\": {\n            \"type\": \"boolean\"\n        },\n        \"price\": {\n            \"type\": \"string\"\n        },\n        \"category\": {\n            \"type\": \"null\"\n        },\n        \"link_item\": {\n            \"type\": \"string\"\n        }\n}\n\n ```\n\n##### response format like `retreive` request.\n\n> 403 Forbidden \n  \n\nonly manager have pepermission to change menuitems.\n\n``` json\n{\n    \"detail\": \"You do not have permission to perform this action.\"\n}\n\n ```"
+							},
+							"response": [
+								{
+									"name": "403 Forbidden",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Token {{Holly_token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{BaseDjURL}}/api/v1/menu-items/6",
+											"host": [
+												"{{BaseDjURL}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"menu-items",
+												"6"
+											]
+										}
+									},
+									"status": "Forbidden",
+									"code": 403,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 19 Dec 2024 15:25:40 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "WSGIServer/0.2 CPython/3.11.2"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Vary",
+											"value": "Accept, Cookie"
+										},
+										{
+											"key": "Allow",
+											"value": "GET, PUT, PATCH, DELETE, HEAD, OPTIONS"
+										},
+										{
+											"key": "djdt-store-id",
+											"value": "46ee4e2e8adc434ba61baf4697c74db8"
+										},
+										{
+											"key": "Server-Timing",
+											"value": "TimerPanel_utime;dur=0;desc=\"User CPU time\", TimerPanel_stime;dur=0;desc=\"System CPU time\", TimerPanel_total;dur=0;desc=\"Total CPU time\", TimerPanel_total_time;dur=12.005299999145791;desc=\"Elapsed time\", SQLPanel_sql_time;dur=0.7788999937474728;desc=\"SQL 2 queries\", CachePanel_total_time;dur=0;desc=\"Cache 0 Calls\""
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Length",
+											"value": "63"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"detail\": \"You do not have permission to perform this action.\"\n}"
+								}
+							]
+						},
+						{
+							"name": "retrieve with slug and id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/menu-items/chees-berger-special/2",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"menu-items",
+										"chees-berger-special",
+										"2"
+									]
+								},
+								"description": "Like `retrieve` request but the url pattern is different :\n\n##### `/api/v1/menu-items/{slug field}/{id}`"
+							},
+							"response": []
+						},
+						{
+							"name": "partial update",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"description": "### partial update\n\nupdate any number of attributes with any payload that explained in `update` **optionally**."
+							},
+							"response": []
+						}
+					],
+					"description": "menu item endpoints"
+				},
+				{
+					"name": "Categories",
+					"item": [
+						{
+							"name": "list",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/categories",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"categories"
+									]
+								},
+								"description": "### Retrieve Categories\n\nThis endpoint retrieves a list of categories.\n\n#### Request\n\n- Method: GET\n    \n- URL: `{{BaseDjURL}}/api/v1/categories`\n    \n\n**paginated response includes**:\n\n- `count` : (integer) number of items in `results`\n    \n- `next` : (string of URL) url for next page, or `null` there is No next page\n    \n- `previous`: (string of URL) url for previous page, or `null` there is No previous page\n    \n- `results`: (array of category objs)\n    \n\n#### Response\n\nThe response is in JSON format and follows the schema below:\n\n``` json\n{\n        \"count\": {\n            \"type\": \"integer\"\n        },\n        \"next\": {\n            \"type\": [\"string\", \"null\"]\n        },\n        \"previous\": {\n            \"type\": [\"string\", \"null\"]\n        },\n        \"results\": [\n            \"type\": \"array\",\n                    \"id\": {\n                        \"type\": \"integer\"\n                    },\n                    \"title\": {\n                        \"type\": \"string\"\n                    },\n                    \"slug\": {\n                        \"type\": \"string\"\n                    }\n                }\n        ]\n    }\n}\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Italian Foods\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/categories",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"categories"
+									]
+								},
+								"description": "The endpoint `{{BaseDjURL}}/api/v1/categories` is a POST request used to create a new category. The request should include a JSON payload in the raw request body type with the `title` parameter to specify the title of the category.\n\n### Request Body\n\n- title (string, required): The title of the category.\n    \n\nUpon a successful execution, the response will have a status code of 201 and a JSON content with the following schema:\n\n``` json\n{\n    \"id\": {\n      \"type\": \"integer\"\n    },\n    \"title\": {\n      \"type\": \"string\"\n    },\n    \"slug\": {\n      \"type\": \"string\"\n    }\n}\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "retreive",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{Holly_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/categories/1",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"categories",
+										"1"
+									]
+								},
+								"description": "### Retrieve Category Details\n\nThis endpoint retrieves the details of a specific category identified by the provided ID.\n\n#### Request\n\n- Method: GET\n    \n- URL: `{{BaseDjURL}}/api/v1/categories/1`\n    \n\n#### Response\n\nThe response is in JSON format and follows the schema below:\n\n``` json\n{\n    \"id\": {\n      \"type\": \"integer\"\n    },\n    \"title\": {\n      \"type\": \"string\"\n    },\n    \"slug\": {\n      \"type\": \"string\"\n    },\n    \"menu_items\": [\n      \"type\": \"array\",\n      \"menu item ids\": {\n        \"type\": \"integer\"\n      }\n    ]\n  }\n}\n\n ```\n\nThe response body includes the following keys:\n\n- `id` (integer): The unique identifier of the category.\n    \n- `title` (string): The title of the category.\n    \n- `slug` (string): The slug of the category.\n    \n- `menu_items` (array of integers): An array of menu item IDs associated with the category."
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Italiano\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/categories/1",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"categories",
+										"1"
+									]
+								},
+								"description": "This endpoint makes an HTTP PUT request to uppdate the `title` of a specific category with `id` .\n\n### Response\n\nThe response will be in JSON format with the following schema:\n\n``` json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"id\": {\n            \"type\": \"integer\"\n        },\n        \"title\": {\n            \"type\": \"string\"\n        },\n        \"slug\": {\n            \"type\": \"string\"\n        },\n        \"menu_items\": {\n            \"type\": \"array\",\n            \"items\": {\n                \"type\": \"integer\"\n            }\n        }\n    }\n}\n\n ```"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Group management",
+					"item": [
+						{
+							"name": "Group management",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/groups/delivery-crew/users",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"groups",
+										"delivery-crew",
+										"users"
+									]
+								},
+								"description": "#### list All users in group with group-name which is specified in url :\n\n`/api/v1/groups/{group-name}/users`\n\n##### possible group names :\n\n1. `manager`\n    \n2. `delivery-crew`\n    \n\n> By default the users are `customer` and not in any of manager or delivery-crew groups \n  \n\nexample\n\n/api/v1/groups/manager/sample_users"
+							},
+							"response": []
+						},
+						{
+							"name": "add user to groups",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"{{Holly_username}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/groups/delivery-crew/users",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"groups",
+										"delivery-crew",
+										"users"
+									]
+								},
+								"description": "Add user with her/his `username` to the specified group with group-name in url\n\nurl pattern\n\n`/api/v1/groups/{group-name}/users`\n\n##### possible group names :\n\n1. `manager`\n    \n2. `delivery-crew`\n    \n\n> By default the users are `customer` and not in any of manager or delivery-crew groups"
+							},
+							"response": []
+						},
+						{
+							"name": "remove user from group",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{pooya_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/groups/delivery-crew/users/{{Holly_username}}",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"groups",
+										"delivery-crew",
+										"users",
+										"{{Holly_username}}"
+									]
+								},
+								"description": "#### delete user with specifying group-name and username of user in url with this pattern\n\n`/api/v1/groups/{group-name}/users/{username}`"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cart",
+					"item": [
+						{
+							"name": "cart items",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{Holly_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/cart/menu-items",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"cart",
+										"menu-items"
+									]
+								},
+								"description": "### GET /api/v1/cart/menu-items\n\nThis endpoint retrieves the menu items in the user's cart.\n\n#### Request\n\nThe request should be sent using the HTTP GET method to the `{{BaseDjURL}}/api/v1/cart/menu-items` endpoint.\n\n#### Request Body\n\nThe request does not require a request body.\n\n#### Response\n\nUpon a successful request, the server will respond with a status code of 200 and a JSON array containing the menu items in the user's cart.\n\n##### Response Body\n\nThe response body will be in the JSON format and will include the following fields for each menu item:\n\n- `user`: The username associated with the cart item.\n    \n- `menu_item_info`: Information about the menu item, including its `id`, `title`, `featured` status, `price`, `category`, and `link_item`.\n    \n- `quantity`: The quantity of the menu item in the cart.\n    \n- `unit_price`: The unit price of the menu item.\n    \n- `price`: The total price of the menu item in the cart.\n    \n\n##### JSON Schema\n\n``` json\n[\n  {\n    \"type\": \"object\",\n    \"properties\": {\n      \"user\": {\"type\": \"string\"},\n      \"menu_item_info\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\"type\": \"integer\"},\n          \"title\": {\"type\": \"string\"},\n          \"featured\": {\"type\": \"boolean\"},\n          \"price\": {\"type\": \"string\"},\n          \"category\": {\"type\": [\"string\", \"null\"]},\n          \"link_item\": {\"type\": \"string\"}\n        }\n      },\n      \"quantity\": {\"type\": \"integer\"},\n      \"unit_price\": {\"type\": \"integer\"},\n      \"price\": {\"type\": \"integer\"}\n    }\n  }\n]\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "add cart item",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{Holly_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "menu_item",
+											"value": "5",
+											"type": "text"
+										},
+										{
+											"key": "quantity",
+											"value": "9",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/cart/menu-items",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"cart",
+										"menu-items"
+									]
+								},
+								"description": "### Add Menu Item to Cart\n\nThis endpoint allows the `current user` to add menu items to the `cart`.\n\n#### Request Body\n\n- `menu_item` (int): The type of the menu item to be added.\n    \n- `quantity` (int): The quantity of the menu item to be added.\n    \n\n> it could be Json too \n  \n\n#### Response\n\nThe response for this request can be represented as a JSON schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"status\": { \"type\": \"string\" },\n    \"message\": { \"type\": \"string\" },\n    \"data\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"cart_id\": { \"type\": \"string\" },\n        \"total_items\": { \"type\": \"integer\" },\n        \"total_price\": { \"type\": \"number\" }\n      }\n    }\n  }\n}\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "delete cart item",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{jack token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/cart/menu-items/2",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"cart",
+										"menu-items",
+										"2"
+									]
+								},
+								"description": "### Delete Menu Item from Cart\n\nThis endpoint is used to delete a specific menu item from the user's cart.\n\n#### Request\n\n- Method: DELETE\n    \n- URL: `/api/v1/cart/menu-items/{menu_item_id}`\n    \n\n#### Request Body\n\nThis request does not require a request body.\n\n#### Response\n\nThe response for this request is a JSON schema describing the success or failure of the deletion operation."
+							},
+							"response": []
+						},
+						{
+							"name": "change cart item quantity",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{Holly_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"quantity\": 6\r\n} ",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/cart/menu-items/2",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"cart",
+										"menu-items",
+										"2"
+									]
+								},
+								"description": "### Update menu_item in Cart of user\n\nThis endpoint allows the client to update the quantity of a specific menu item in the cart.\n\n#### Request\n\n- Method: PATCH\n    \n- URL: `{{BaseDjURL}}/api/v1/cart/menu-items/{menu_item_id}`\n    \n\n##### body:\n\n``` json\n{ \"quantity\": \"type (int)\" }\n\n ```\n\n{ \"quantity\": 5}\n\n#### Response\n\nThe response for this request can be documented as a JSON schema:\n\n``` json\n// like `create` response\n\n ```"
+							},
+							"response": []
+						},
+						{
+							"name": "clear cart",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Token {{jack token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{BaseDjURL}}/api/v1/cart/menu-items",
+									"host": [
+										"{{BaseDjURL}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"cart",
+										"menu-items"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
+									]
+								},
+								"description": "### remove all existing menu_items in the current user's cart"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "order list",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Holly_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/orders",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							]
+						},
+						"description": "### GET /api/v1/orders\n\nThis endpoint retrieves a list of orders .\n\n#### only accessible for users in `manager` group\n\n#### Request\n\nNo request body is required for this endpoint.\n\n#### Response\n\n### when user is Manager:\n\nThe response will be a JSON array containing all order objects. Each order object has the following properties:\n\n- `id` (number): The unique identifier of the order.\n    \n- `user` (string): The username of the user who placed the order.\n    \n- `user_full_name` (object): An object containing the full name of the user, with properties `username`, `first_name`, and `last_name`.\n    \n- `total_price` (string): The total price of the order.\n    \n- `time_ordered` (string): The timestamp when the order was placed.\n    \n- `status` (boolean): Indicates delivered (true) or not (false).\n    \n- `items` (array): An array of objects representing the items in the order, with properties `id`, `unit_price`, `quantity`, `menu_item_link`, and `price`.\n    \n- `delivery_crew_name` (string): The name of the delivery crew assigned to the order, or null if not assigned.\n    \n\nExample response:\n\n``` json\n[\n  {\n    \"id\": 0,\n    \"user\": \"\",\n    \"user_full_name\": {\n      \"username\": \"\",\n      \"first_name\": \"\",\n      \"last_name\": \"\"\n    },\n    \"total_price\": \"\",\n    \"time_ordered\": \"\",\n    \"status\": true,\n    \"items\": [\n      {\n        \"id\": 0,\n        \"unit_price\": \"\",\n        \"quantity\": 0,\n        \"menu_item_link\": \"\",\n        \"price\": 0\n      }\n    ],\n    \"delivery_crew_name\": null\n  }\n]\n\n ```\n\n### When user is Delivery Crew:\n\nonly related orders will be returned.\n\n### When user is customer\n\nonly orders of this user in the history will be returned."
+					},
+					"response": []
+				},
+				{
+					"name": "order create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{Holly_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/orders",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders"
+							]
+						},
+						"description": "#### create an order for current user from its menu-items.\n\nremove all the existing menu-items in the user cart and create an order for it.\n\n> manager sopuse to assign a delivery-crew to this after creation."
+					},
+					"response": []
+				},
+				{
+					"name": "change order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{pooya_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"delivery_crew\": 7,\r\n    \"status\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/orders/3",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"3"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						},
+						"description": "### Update Order Details\n\n### _only manager access this endpoint_\n\nThis endpoint is used to update the details of a specific order.\n\n#### Request Body Parameters\n\n- `delivery_crew` (id): id of the delivery crew to be assigned to the order.\n    \n- `status` (bool): is delivered or not\n    \n\n#### Response\n\nThe response for this request is a JSON object conforming to the following schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"integer\"\n    },\n    \"user\": {\n      \"type\": \"string\"\n    },\n    \"user_full_name\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"username\": {\n          \"type\": \"string\"\n        },\n        \"first_name\": {\n          \"type\": \"string\"\n        },\n        \"last_name\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"total_price\": {\n      \"type\": \"string\"\n    },\n    \"time_ordered\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"boolean\"\n    },\n    \"items\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"integer\"\n          },\n          \"unit_price\": {\n            \"type\": \"string\"\n          },\n          \"quantity\": {\n            \"type\": \"integer\"\n          },\n          \"menu_item_link\": {\n            \"type\": \"string\"\n          },\n          \"price\": {\n            \"type\": \"integer\"\n          }\n        }\n      }\n    },\n    \"delivery_crew_name\": {\n      \"type\": [\"object\", \"null\"],\n      \"properties\": {\n        \"username\": {\n          \"type\": \"string\"\n        },\n        \"first_name\": {\n          \"type\": \"string\"\n        },\n        \"last_name\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "order-destroy",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Token {{pooya_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BaseDjURL}}/api/v1/orders/4",
+							"host": [
+								"{{BaseDjURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"orders",
+								"4"
+							]
+						},
+						"description": "### _only manager access this endpoint_\n\n##### delete some order from database by it's id:\n\n/api/v1/orders/{id}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "book retrieve all",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{jack token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"new Book\",\r\n    \"author\": \"Pooya\",\r\n    \"category_id\": 2,\r\n    \"price\": 30\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/books?format=json&page=2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"books"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json"
+						},
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "borrow/books",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/borrow/books",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"borrow",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book creator",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "When",
+							"type": "text"
+						},
+						{
+							"key": "author",
+							"value": "Mikle Kely",
+							"type": "text"
+						},
+						{
+							"key": "category_id ",
+							"value": "2",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/book",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"book"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "books retrieve one",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/books/1?format=json",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"books",
+						"1"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "category retrieve",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/categories",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "secret",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{Holly_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{access jwt}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "History",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/secret",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"secret"
+					],
+					"query": [
+						{
+							"key": "csrf-token",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add to group",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Token",
+			"value": "57fcebc191826d641da0c70bc20f6fa82fcaf10d"
+		},
+		{
+			"key": "jack token",
+			"value": "6fbc9dd7980509aaf31daf3b037298d8c849e40b"
+		},
+		{
+			"key": "username super",
+			"value": "\"pooya\""
+		},
+		{
+			"key": "password super",
+			"value": "\"pooya_api\""
+		},
+		{
+			"key": "UP super",
+			"value": "\"username\":{{username super}},\r\n    \"password\":{{password super}}"
+		},
+		{
+			"key": "access jwt",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIyNzU5MTQzLCJpYXQiOjE3MjI3NTg4NDMsImp0aSI6ImUyYTQyYjIyZjI4MDRmYTM4NTgwMjY3YWRmMDRjNjExIiwidXNlcl9pZCI6MX0.dErBX4Q2XJv7x4e284bzY0ImodP5hBSN02RzlwgverQ"
+		},
+		{
+			"key": "refresh jwt",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyMjg0NTI0MywiaWF0IjoxNzIyNzU4ODQzLCJqdGkiOiIxMDYzNDJmMDBiZGM0YTM3OTE4Nzc0YzBiM2UzMjllNyIsInVzZXJfaWQiOjF9.y_7JwOxA9mi2AX1zhBVpYRyQ9ghPv5nrUN_Kp29MtlM"
+		},
+		{
+			"key": "pooya_token",
+			"value": ""
+		},
+		{
+			"key": "undefined_username",
+			"value": ""
+		},
+		{
+			"key": "undefined_password",
+			"value": ""
+		},
+		{
+			"key": "undefined_email",
+			"value": ""
+		},
+		{
+			"key": "Javva_username",
+			"value": ""
+		},
+		{
+			"key": "Javva_password",
+			"value": ""
+		},
+		{
+			"key": "Javva_email",
+			"value": ""
+		},
+		{
+			"key": "Holly_username",
+			"value": ""
+		},
+		{
+			"key": "Holly_password",
+			"value": ""
+		},
+		{
+			"key": "Holly_email",
+			"value": ""
+		},
+		{
+			"key": "Javva_token",
+			"value": ""
+		},
+		{
+			"key": "Holly_token",
+			"value": ""
+		},
+		{
+			"key": "undefined_token",
+			"value": ""
+		},
+		{
+			"key": "BaseDjURL",
+			"value": "http://127.0.0.1:8000",
+			"type": "default"
+		},
+		{
+			"key": "test user 1_username",
+			"value": ""
+		},
+		{
+			"key": "test user 1_password",
+			"value": ""
+		},
+		{
+			"key": "test user 1_email",
+			"value": ""
+		},
+		{
+			"key": "test_user_1_username",
+			"value": ""
+		},
+		{
+			"key": "test_user_1_password",
+			"value": ""
+		},
+		{
+			"key": "test_user_1_email",
+			"value": ""
+		},
+		{
+			"key": "test_user_2_username",
+			"value": ""
+		},
+		{
+			"key": "test_user_2_password",
+			"value": ""
+		},
+		{
+			"key": "test_user_2_email",
+			"value": ""
+		}
+	]
+}

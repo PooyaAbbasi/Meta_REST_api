@@ -20,6 +20,9 @@ A REST API for an online bookshop. It includes:
 - Customer user management
 - Management of book categories and ratings
 
+> for see and using this api docs interactively just import [Postman collection](My%20Meta%20Rest.postman_collection.json)
+> in your Postman workspace.
+
 ## Course Link
 [Meta Back-End Developer Professional Certificate](https://www.coursera.org/professional-certificates/meta-back-end-developer)
 
